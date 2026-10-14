@@ -1,0 +1,249 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'unsafe-inline' https://cdnjs.cloudflare.com;style-src 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob: mediastream:;connect-src 'none';base-uri 'none';form-action 'none';object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12263A"><title>نظام الحضور — نسخة تجريبية</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12263A;--paper:#F4F6F8;--line:#DDE3EA;--muted:#5B6B7B;--brand:#0B6E6E;--ok:#15803D;--warn:#B45309;--bad:#B91C1C;--gold:#D4A017}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font:400 16px/1.6 'IBM Plex Sans Arabic',Tahoma,system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #2DD4BF;outline-offset:2px}
+svg.i{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#demoBar{background:var(--gold);padding:8px 16px;text-align:center;font-size:14px;font-weight:700;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
+#demoBar button{background:var(--ink);color:#fff;border:0;border-radius:8px;padding:5px 14px;font-size:13px;font-weight:700;cursor:pointer}
+header{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top))}
+header b{display:block;font-size:18px;line-height:1.3}header small{opacity:.7;font-size:13px}
+.chip{font-size:13px;padding:4px 12px;border-radius:99px;background:var(--gold);color:var(--ink);font-weight:700}
+main{max-width:620px;margin:auto;padding:16px 16px calc(100px + env(safe-area-inset-bottom))}
+.tab{display:none}.tab.on{display:block}
+h2{font-size:18px;margin:20px 0 8px}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:16px}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);outline:none}
+.btn{display:block;width:100%;padding:12px;border:0;border-radius:10px;background:var(--brand);color:#fff;font-weight:700;text-align:center;cursor:pointer;touch-action:manipulation}
+.btn:active{filter:brightness(.9)}.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn.red{background:#fff;color:var(--bad);border:1px solid #F3C4C4}
+.row{display:flex;gap:8px;align-items:stretch}.row>*{flex:1}.row .btn{width:auto;padding:0 14px;flex:none}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.stat{display:flex;align-items:baseline;justify-content:space-between}.stat strong{font-size:34px;font-variant-numeric:tabular-nums}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;width:0;background:var(--brand);transition:width .3s}
+.vp{border:4px solid transparent;border-radius:18px;background:var(--ink);margin-bottom:14px;padding:14px;text-align:center;color:#fff;transition:border-color .15s}
+.vp.ok{border-color:#4ADE80}.vp.dup{border-color:#FBBF24}.vp.bad{border-color:#F87171}
+#camWrap{position:relative;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#000;aspect-ratio:4/3}
+#video{width:100%;height:100%;object-fit:cover;display:block}
+#camWrap:after{content:"";position:absolute;inset:18%;border:3px solid #2DD4BF;border-radius:16px;box-shadow:0 0 0 999px #0005;pointer-events:none}
+.vp p{margin:4px 0 12px;opacity:.75;font-size:14px}
+#scanInput{background:#fff;color:var(--ink);border:0;text-align:center;font-weight:700;letter-spacing:1px}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}li:last-child{border:0}
+li small{display:block;color:var(--muted);font-size:13px}
+.tag{font-size:13px;padding:3px 12px;border-radius:99px;background:#DCFCE7;color:var(--ok);font-weight:500;border:0;cursor:pointer;white-space:nowrap}.tag.no{background:#EEF2F6;color:var(--muted)}
+.x{border:0;background:none;color:var(--bad);cursor:pointer;font-size:20px;padding:4px 8px}
+.empty{color:var(--muted);text-align:center;padding:12px 0;margin:0;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.grid div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center}
+.grid strong{display:block;font-size:26px;line-height:1.3}.grid span{font-size:13px;color:var(--muted)}
+details summary{cursor:pointer;font-weight:700}details[open] summary{margin-bottom:10px}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:5;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;padding:10px 0 8px;display:grid;justify-items:center;gap:2px;font-size:13px;color:var(--muted);cursor:pointer}
+nav button.on{color:var(--brand);font-weight:700}
+#sheet{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));max-width:596px;margin:auto;border-radius:18px;padding:14px 20px;color:#fff;display:grid;transform:translateY(160%);transition:transform .2s;z-index:9;box-shadow:0 10px 30px #0003}
+#sheet.on{transform:none}#sheet b{font-size:24px;line-height:1.3}#sheet.ok{background:var(--ok)}#sheet.dup{background:var(--warn)}#sheet.bad{background:var(--bad)}
+#toast{position:fixed;top:80px;left:16px;right:16px;margin:auto;max-width:420px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:10px;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}#toast.on{opacity:1}
+#help{background:#E7F5F5;border:1px solid #0B6E6E33;border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:14px}
+code{background:#fff;padding:1px 8px;border-radius:6px;font-size:13px;border:1px solid var(--line)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.idc{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.ih{background:var(--ink);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;font-size:14px}.ih span{opacity:.7;font-size:12px}
+.ib{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px}
+.im h4{margin:0;font-size:17px;line-height:1.4}.im p{margin:2px 0 6px;color:var(--muted);font-size:13px}
+.qr{width:104px;flex:none}.qr svg{width:100%;height:auto;display:block}
+.bc{display:block;max-width:92%;height:44px;margin:0 auto 10px}
+.idc .btn{border-radius:0;border-width:1px 0 0}
+@media print{#demoBar,header,nav,.noprint,.tab:not(#t-cards),#sheet,#toast{display:none!important}main{padding:0;max-width:none}.cards{grid-template-columns:repeat(2,1fr)}.idc{border:1px solid #999}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<div id="demoBar"><span>🎯 نسخة تجريبية — البيانات وهمية ومحفوظة على جهازك فقط</span><button id="resetDemo">إعادة تعيين</button></div>
+<header><div><b>نظام الحضور</b><small id="sname"></small></div><span class="chip">تجريبي</span></header>
+<main>
+<section class="tab on" id="t-scan">
+<div id="help"><b>جرّب:</b> شغّل الكاميرا ووجّهها لأي بطاقة من تاب "البطاقات" (على شاشة تانية أو مطبوعة)، أو اكتب كود طالب مثل <code>1001</code> — وده نفس شغل ماسح الباركود USB.</div>
+<label for="sess">الجلسة</label>
+<div class="row" style="margin-bottom:14px"><select id="sess"></select><button class="btn alt" id="newS">جديدة</button><button class="btn red" id="delS" aria-label="حذف الجلسة">حذف</button></div>
+<div class="box"><div class="stat"><span>حضروا</span><span><strong id="cnt">0</strong> من <b id="tot">0</b></span></div><div class="bar"><i id="bar"></i></div></div>
+<div class="vp" id="vp">
+<div id="camWrap" hidden><video id="video" playsinline muted></video></div>
+<button class="btn gold" id="camBtn" style="background:#2DD4BF;color:var(--ink)">📷 تشغيل الكاميرا</button>
+<p>أو اكتب الكود / استخدم ماسح باركود USB</p>
+<input id="scanInput" placeholder="الكود" dir="ltr" maxlength="64" autocomplete="off">
+<button class="btn" id="scanBtn" style="margin-top:8px">تسجيل الحضور</button>
+</div>
+<div class="row" style="align-items:center"><h2 style="flex:1">آخر عمليات المسح</h2><button class="btn alt" id="undo" style="padding:6px 12px">تراجع</button></div>
+<div class="box"><ul id="recent"></ul></div>
+</section>
+
+<section class="tab" id="t-stu">
+<div class="box"><details open><summary>إضافة طالب</summary>
+<div class="g2"><div><label for="nName">الاسم</label><input id="nName" maxlength="60"></div><div><label for="nCode">الكود (اختياري)</label><input id="nCode" dir="ltr" maxlength="20" placeholder="تلقائي"></div></div>
+<label for="nCls">الفصل</label><input id="nCls" maxlength="30" style="margin-bottom:10px">
+<button class="btn" id="addOne">إضافة وإنشاء بطاقة</button></details></div>
+<div class="box"><details><summary>إضافة جماعية</summary>
+<label for="list">كل طالب في سطر: الكود، الاسم، الفصل</label>
+<textarea id="list" rows="4" placeholder="2001, أحمد محمد, 3/أ"></textarea>
+<button class="btn" id="add" style="margin-top:8px">إضافة</button></details></div>
+<input id="q" type="search" placeholder="ابحث بالاسم أو الكود" style="margin-bottom:10px">
+<div class="box"><ul id="slist"></ul></div>
+</section>
+
+<section class="tab" id="t-cards">
+<div class="box noprint"><label for="org">اسم المؤسسة على البطاقة</label><input id="org" maxlength="40" style="margin-bottom:10px">
+<button class="btn" id="print">🖨️ طباعة كل البطاقات</button></div>
+<div class="cards" id="cards"></div>
+</section>
+
+<section class="tab" id="t-rep">
+<div class="grid"><div><strong id="rp">0</strong><span>حاضر</span></div><div><strong id="ra">0</strong><span>غائب</span></div><div><strong id="rr">0%</strong><span>نسبة الحضور</span></div></div>
+<button class="btn" id="exp">تنزيل تقرير (Excel / CSV)</button>
+<h2>الحضور حسب الجلسة</h2><div class="box"><ul id="bySess"></ul></div>
+<h2>الغائبون</h2><div class="box"><ul id="abs"></ul></div>
+</section>
+</main>
+
+<nav>
+<button class="on" data-t="scan"><svg class="i" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/></svg>مسح</button>
+<button data-t="stu"><svg class="i" viewBox="0 0 24 24"><path d="M16 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M21 20v-1a4 4 0 0 0-3-3.9M15 4.2a3.5 3.5 0 0 1 0 6.6"/></svg>الطلاب</button>
+<button data-t="cards"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h4M7 14h2M15 10h2v4h-2z"/></svg>البطاقات</button>
+<button data-t="rep"><svg class="i" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>التقارير</button>
+</nav>
+<div id="sheet" role="status" aria-live="polite"></div><div id="toast"></div>
+<dialog id="dlg" style="border:0;border-radius:16px;padding:18px;width:min(92vw,380px)">
+<label for="title">اسم الجلسة</label><input id="title" maxlength="60">
+<div class="row" style="margin-top:12px"><button class="btn" id="create">إنشاء</button><button class="btn alt" id="cancel">إلغاء</button></div></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.6/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script>
+'use strict';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"'`]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
+const clean=(s,n)=>String(s||'').replace(/[\u0000-\u001f\u007f<>]/g,'').trim().slice(0,n);
+const okCode=c=>/^[A-Za-z0-9_-]{1,20}$/.test(c);
+const rnd=()=>'ST-'+[...crypto.getRandomValues(new Uint8Array(8))].map(x=>x.toString(16).padStart(2,'0')).join('');
+const KEY='att_demo_v2',NAMES=['أحمد محمد إبراهيم','سارة علي حسن','محمد خالد يوسف','فاطمة أحمد سعيد','عمر محمود عبدالله','مريم إبراهيم علي','يوسف سامي فؤاد','نورا محمد طارق','كريم أيمن رشاد','ليلى حسين عمر','حسن علي محمود','دينا مصطفى كمال'];
+let D,RECENT=[];
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(D))}catch{toast('تعذر الحفظ على المتصفح')}};
+function seed(){
+ const now=Date.now(),st=NAMES.map((n,i)=>({c:String(1001+i),n,k:i<6?'3/أ':'3/ب',t:rnd()}));
+ const se=[{id:'s1',n:'رياضيات — الحصة الأولى',ts:now-864e5},{id:'s2',n:'علوم — الحصة الثانية',ts:now}],at=[];
+ st.forEach((s,i)=>{if(i%5!==4)at.push({s:'s1',c:s.c,t:new Date(now-864e5+i*3e4).toISOString()});if(i%4!==3&&i<9)at.push({s:'s2',c:s.c,t:new Date(now-6e5+i*3e4).toISOString()})});
+ D={st,se,at,org:'مدرسة النور النموذجية',sid:'s2'};save();
+}
+function load(){try{D=JSON.parse(localStorage.getItem(KEY))}catch{D=null}
+ if(!D||!Array.isArray(D.st)||!Array.isArray(D.se)||!Array.isArray(D.at))seed();
+ D.org=clean(D.org,40)||'المؤسسة';if(!D.se.some(s=>s.id===D.sid))D.sid=D.se[0]?.id||'';}
+const cur=()=>D.se.find(s=>s.id===D.sid);
+const pres=()=>new Set(D.at.filter(a=>a.s===D.sid).map(a=>a.c));
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2500)};
+let ac;function beep(ok){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume&&ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=ok?880:260;g.gain.value=.08;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+(ok?.1:.25))}catch{}}
+function show(cls,title,sub){const e=$('#sheet'),v=$('#vp');e.className='on '+cls;e.innerHTML=`<b>${esc(title)}</b><span>${esc(sub)}</span>`;v.className='vp '+cls;
+ clearTimeout(show.h);show.h=setTimeout(()=>{e.className='';v.className='vp'},2200);beep(cls==='ok');navigator.vibrate&&navigator.vibrate(cls==='ok'?60:[80,50,80])}
+
+/* ---------- QR / Barcode ---------- */
+function qrObj(t){const q=qrcode(0,'M');q.addData(t);q.make();return q}
+function qrSvg(t){const q=qrObj(t),n=q.getModuleCount();let p='';
+ for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))p+=`M${c+4} ${r+4}h1v1h-1z`;
+ return `<svg viewBox="0 0 ${n+8} ${n+8}" shape-rendering="crispEdges" role="img" aria-label="QR"><rect width="100%" height="100%" fill="#fff"/><path d="${p}" fill="#000"/></svg>`}
+const cardHTML=s=>`<div class="idc"><div class="ih"><b>${esc(D.org)}</b><span>بطاقة حضور</span></div><div class="ib"><div class="im"><h4>${esc(s.n)}</h4><p>${esc(s.k)}</p><code>${esc(s.c)}</code></div><div class="qr">${qrSvg(s.t)}</div></div><svg class="bc" data-c="${esc(s.c)}"></svg><button class="btn alt noprint" data-png="${esc(s.c)}">تنزيل البطاقة PNG</button></div>`;
+function renderCards(){$('#cards').innerHTML=D.st.map(cardHTML).join('')||'<p class="empty">أضف طلابًا لإنشاء بطاقاتهم.</p>';
+ $$('.bc').forEach(e=>{try{JsBarcode(e,e.dataset.c,{format:'CODE128',height:40,width:1.6,margin:0,displayValue:false})}catch{}})}
+function png(s){const W=1016,H=640,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),F='"IBM Plex Sans Arabic",Tahoma,sans-serif';
+ g.fillStyle='#fff';g.fillRect(0,0,W,H);g.fillStyle='#12263A';g.fillRect(0,0,W,110);
+ g.direction='rtl';g.textAlign='right';g.fillStyle='#fff';g.font='700 40px '+F;g.fillText(D.org,W-40,70);
+ g.fillStyle='#12263A';g.font='700 50px '+F;g.fillText(s.n,W-40,230);
+ g.fillStyle='#5B6B7B';g.font='400 34px '+F;g.fillText(s.k,W-40,290);g.font='700 38px monospace';g.direction='ltr';g.textAlign='right';g.fillText(s.c,W-40,350);
+ const q=qrObj(s.t),n=q.getModuleCount(),z=Math.floor(300/(n+8)),sz=z*(n+8);g.fillStyle='#fff';g.fillRect(40,150,sz,sz);g.fillStyle='#000';
+ for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))g.fillRect(40+(k+4)*z,150+(r+4)*z,z,z);
+ try{const b=document.createElement('canvas');JsBarcode(b,s.c,{format:'CODE128',height:90,width:3,displayValue:false,margin:0});const sc=Math.min(1,(W-80)/b.width);g.drawImage(b,(W-b.width*sc)/2,490,b.width*sc,b.height*sc)}catch{}
+ c.toBlob(bl=>{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='card-'+s.c+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3)})}
+
+/* ---------- Render ---------- */
+function render(){
+ const t=D.st.length,P=pres(),p=P.size,f=$('#q').value.trim(),tag=(c,on)=>`<button class="tag ${on?'':'no'}" data-tg="${esc(c)}" aria-label="تبديل الحضور">${on?'حاضر':'لم يحضر'}</button>`;
+ $('#cnt').textContent=p;$('#tot').textContent=t;$('#bar').style.width=(t?p/t*100:0)+'%';$('#sname').textContent=cur()?.n||'';
+ $('#sess').innerHTML=D.se.map(s=>`<option value="${esc(s.id)}"${s.id===D.sid?' selected':''}>${esc(s.n)}</option>`).join('')||'<option value="">لا توجد جلسات</option>';
+ $('#recent').innerHTML=RECENT.length?RECENT.map(r=>`<li><div>${esc(r.n)}<small>${esc(r.time)}</small></div><span class="tag">حاضر</span></li>`).join(''):'<p class="empty">لم يُسجَّل أي حضور بعد.</p>';
+ $('#slist').innerHTML=D.st.filter(s=>!f||s.n.includes(f)||s.c.includes(f)).map(s=>`<li><div>${esc(s.n)}<small>${esc(s.c)} · ${esc(s.k)}</small></div><div class="row" style="flex:none;align-items:center">${tag(s.c,P.has(s.c))}<button class="x" data-dl="${esc(s.c)}" aria-label="حذف ${esc(s.n)}">×</button></div></li>`).join('')||'<p class="empty">لا يوجد طلاب.</p>';
+ $('#rp').textContent=p;$('#ra').textContent=t-p;$('#rr').textContent=(t?Math.round(p/t*100):0)+'%';
+ $('#abs').innerHTML=D.st.filter(s=>!P.has(s.c)).map(s=>`<li><div>${esc(s.n)}</div><small>${esc(s.c)}</small></li>`).join('')||'<p class="empty">لا يوجد غائبون.</p>';
+ $('#bySess').innerHTML=D.se.map(s=>{const n=new Set(D.at.filter(a=>a.s===s.id).map(a=>a.c)).size,pc=t?Math.round(n/t*100):0;return `<li style="display:block"><div class="stat"><span>${esc(s.n)}</span><b>${pc}%</b></div><div class="bar"><i style="width:${pc}%"></i></div></li>`}).join('')||'<p class="empty">لا توجد جلسات.</p>';
+ if($('#t-cards').classList.contains('on'))renderCards();
+}
+
+/* ---------- Attendance ---------- */
+let lastV='',lastT=0;
+function scan(v){v=clean(v,64);if(!v)return;const now=Date.now();if(v===lastV&&now-lastT<2500)return;lastV=v;lastT=now;
+ if(!D.sid)return show('bad','لا توجد جلسة','أنشئ جلسة أولًا');
+ const s=D.st.find(x=>x.t===v||x.c===v);
+ if(!s)return show('bad','كود غير معروف','هذا الكود غير مسجّل');
+ if(pres().has(s.c))return show('dup',s.n,'سُجّل حضوره من قبل');
+ D.at.push({s:D.sid,c:s.c,t:new Date().toISOString()});save();
+ RECENT.unshift({n:s.n,c:s.c,time:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})});RECENT=RECENT.slice(0,8);
+ render();show('ok',s.n,'تم تسجيل الحضور')}
+function toggle(c){const i=D.at.findIndex(a=>a.s===D.sid&&a.c===c);if(i>-1)D.at.splice(i,1);else D.at.push({s:D.sid,c,t:new Date().toISOString()});save();render()}
+
+/* ---------- Camera ---------- */
+let stream,det,timer,busy=false;const cv=document.createElement('canvas');
+async function camOn(){
+ if(!navigator.mediaDevices?.getUserMedia)return toast('الكاميرا تحتاج رابط HTTPS ومتصفحًا حديثًا');
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false})}
+ catch(e){return toast(e.name==='NotAllowedError'?'تم رفض إذن الكاميرا — فعّله من إعدادات المتصفح':'تعذّر تشغيل الكاميرا')}
+ const v=$('#video');v.srcObject=stream;await v.play().catch(()=>{});$('#camWrap').hidden=false;$('#camBtn').textContent='⏹ إيقاف الكاميرا';
+ try{det=new BarcodeDetector({formats:['qr_code','code_128']})}catch{det=null}loop()}
+function camOff(){clearTimeout(timer);stream&&stream.getTracks().forEach(t=>t.stop());stream=null;$('#video').srcObject=null;$('#camWrap').hidden=true;$('#camBtn').textContent='📷 تشغيل الكاميرا'}
+async function loop(){if(!stream)return;const v=$('#video');
+ if(v.readyState>=2&&!busy){busy=true;try{
+  if(det){const r=await det.detect(v);if(r[0])scan(r[0].rawValue)}
+  else if(window.jsQR&&v.videoWidth){const w=480,h=Math.round(w*v.videoHeight/v.videoWidth);cv.width=w;cv.height=h;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(v,0,0,w,h);const d=x.getImageData(0,0,w,h),r=jsQR(d.data,w,h);if(r)scan(r.data)}
+ }catch{}busy=false}
+ timer=setTimeout(loop,150)}
+
+/* ---------- Events ---------- */
+$('#camBtn').onclick=()=>stream?camOff():camOn();
+$('#scanBtn').onclick=()=>{scan($('#scanInput').value);$('#scanInput').value='';$('#scanInput').focus()};
+$('#scanInput').onkeydown=e=>{if(e.key==='Enter')$('#scanBtn').click()};
+$('#undo').onclick=()=>{const r=RECENT.shift();if(!r)return toast('لا يوجد ما يُتراجع عنه');const i=D.at.findIndex(a=>a.s===D.sid&&a.c===r.c);if(i>-1)D.at.splice(i,1);save();render();toast('تم التراجع')};
+function go(t){if(t!=='scan')camOff();$$('nav button,.tab').forEach(e=>e.classList.remove('on'));$(`nav [data-t=${t}]`).classList.add('on');$('#t-'+t).classList.add('on');render()}
+$$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)camOff()});
+$('#sess').onchange=()=>{D.sid=$('#sess').value;save();render()};
+let qT;$('#q').oninput=()=>{clearTimeout(qT);qT=setTimeout(render,120)};
+$('#newS').onclick=()=>{$('#title').value=new Date().toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});$('#dlg').showModal()};
+$('#cancel').onclick=()=>$('#dlg').close();
+$('#create').onclick=()=>{const id='s'+Date.now();D.se.unshift({id,n:clean($('#title').value,60)||'جلسة جديدة',ts:Date.now()});D.sid=id;save();$('#dlg').close();render();toast('تم إنشاء الجلسة')};
+$('#delS').onclick=()=>{if(!D.sid||!confirm('حذف الجلسة وكل حضورها؟'))return;D.at=D.at.filter(a=>a.s!==D.sid);D.se=D.se.filter(s=>s.id!==D.sid);D.sid=D.se[0]?.id||'';save();render()};
+function addStu(c,n,k){c=clean(c,20);n=clean(n,60);k=clean(k,30);if(!n)return 'الاسم مطلوب';
+ if(!c){let i=1001+D.st.length;while(D.st.some(s=>s.c===String(i)))i++;c=String(i)}
+ if(!okCode(c))return 'الكود: حروف إنجليزية وأرقام فقط';if(D.st.some(s=>s.c===c))return 'الكود '+c+' مستخدم';
+ D.st.push({c,n,k,t:rnd()});return ''}
+$('#addOne').onclick=()=>{const e=addStu($('#nCode').value,$('#nName').value,$('#nCls').value);if(e)return toast(e);save();['#nCode','#nName','#nCls'].forEach(s=>$(s).value='');render();toast('تمت الإضافة — البطاقة جاهزة في تاب البطاقات')};
+$('#add').onclick=()=>{let ok=0,bad=0;$('#list').value.split('\n').slice(0,500).forEach(l=>{const a=l.split(/[,\t،]/);if(a.length<2)return;addStu(a[0],a[1],a[2]||'')?bad++:ok++});
+ if(!ok&&!bad)return toast('اكتب كل طالب في سطر');save();$('#list').value='';render();toast(`أُضيف ${ok}${bad?' — تخطّينا '+bad:''}`)};
+$('#slist').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.tg)toggle(b.dataset.tg);
+ else if(b.dataset.dl&&confirm('حذف الطالب وسجل حضوره؟')){D.st=D.st.filter(s=>s.c!==b.dataset.dl);D.at=D.at.filter(a=>a.c!==b.dataset.dl);save();render()}};
+$('#cards').onclick=e=>{const b=e.target.closest('[data-png]');if(b){const s=D.st.find(x=>x.c===b.dataset.png);s&&png(s)}};
+$('#org').oninput=e=>{D.org=clean(e.target.value,40)||'المؤسسة';save();renderCards()};
+$('#print').onclick=()=>{renderCards();window.print()};
+$('#exp').onclick=()=>{if(!D.sid)return toast('اختر جلسة أولًا');
+ const safe=v=>{v=String(v??'');if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+ const rows=[['الكود','الاسم','الفصل','الحالة','الوقت']];
+ D.st.forEach(s=>{const r=D.at.find(a=>a.s===D.sid&&a.c===s.c);rows.push([s.c,s.n,s.k,r?'حاضر':'غائب',r?new Date(r.t).toLocaleString('ar-EG'):''])});
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(r=>r.map(safe).join(',')).join('\r\n')],{type:'text/csv'}));
+ a.download='attendance-report.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3)};
+$('#resetDemo').onclick=()=>{if(!confirm('إرجاع البيانات التجريبية للحالة الأصلية؟'))return;camOff();seed();RECENT=[];$('#org').value=D.org;render();toast('تمت إعادة التعيين')};
+
+load();$('#org').value=D.org;render();
+if(!window.qrcode||!window.JsBarcode)toast('تعذّر تحميل مكتبات QR — تأكد من الاتصال بالإنترنت');
+</script></body></html>
