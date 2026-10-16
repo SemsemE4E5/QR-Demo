@@ -64,20 +64,29 @@ code{background:#fff;padding:1px 8px;border-radius:6px;font-size:13px;border:1px
 .idc .btn{border-radius:0;border-width:1px 0 0}
 @media print{#demoBar,header,nav,.noprint,.tab:not(#t-cards),#sheet,#toast{display:none!important}main{padding:0;max-width:none}.cards{grid-template-columns:repeat(2,1fr)}.idc{border:1px solid #999}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.gb{display:inline-block;background:#E7F5F5;color:var(--brand);padding:2px 14px;border-radius:99px;font-size:14px;font-weight:700}
+.cam{background:#2DD4BF;color:var(--ink)}
+.tips{font-size:13px;opacity:.8;margin:10px 0 12px}
+#camWrap{aspect-ratio:auto;min-height:180px}#camWrap:after{inset:10%}
+#reader{width:100%;border:0!important}#reader video{width:100%!important;display:block}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.chips button{flex:1;padding:8px 6px;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:99px;cursor:pointer}.chips button:active{background:#E7F5F5}
+.rowb{width:100%;border:0;background:none;text-align:right;padding:2px 0;cursor:pointer;display:block}.rowb.sel{background:#E7F5F5;border-radius:8px;padding:6px 8px}
+.pc{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}.pc.low{color:var(--bad)}.pc.mid{color:var(--warn)}.pc.hi{color:var(--ok)}
+.qr{width:124px}.grp{background:var(--brand);color:#fff;padding:4px 14px;font-size:14px;font-weight:700}
+.bc{width:92%;height:auto;max-height:90px;margin:0 auto 10px;display:block}
+h2 span{font-size:14px;font-weight:400;color:var(--muted)}
 </style></head><body>
 <div id="demoBar"><span>🎯 نسخة تجريبية — البيانات وهمية ومحفوظة على جهازك فقط</span><button id="resetDemo">إعادة تعيين</button></div>
 <header><div><b>نظام الحضور</b><small id="sname"></small></div><span class="chip">تجريبي</span></header>
 <main>
 <section class="tab on" id="t-scan">
-<div id="help"><b>جرّب:</b> شغّل الكاميرا ووجّهها لأي بطاقة من تاب "البطاقات" (على شاشة تانية أو مطبوعة)، أو اكتب كود طالب مثل <code>1001</code> — وده نفس شغل ماسح الباركود USB.</div>
-<label for="sess">الجلسة</label>
-<div class="row" style="margin-bottom:14px"><select id="sess"></select><button class="btn alt" id="newS">جديدة</button><button class="btn red" id="delS" aria-label="حذف الجلسة">حذف</button></div>
-<div class="box"><div class="stat"><span>حضروا</span><span><strong id="cnt">0</strong> من <b id="tot">0</b></span></div><div class="bar"><i id="bar"></i></div></div>
+<div class="box"><label for="sess">الجلسة</label><div class="row"><select id="sess"></select><button class="btn alt" id="newS">+ جلسة</button><button class="btn red" id="delS" aria-label="حذف الجلسة">حذف</button></div></div>
+<div class="box"><div class="stat"><span class="gb" id="gtag"></span><span><strong id="cnt">0</strong> من <b id="tot">0</b></span></div><div class="bar"><i id="bar"></i></div></div>
 <div class="vp" id="vp">
-<div id="camWrap" hidden><video id="video" playsinline muted></video></div>
-<button class="btn gold" id="camBtn" style="background:#2DD4BF;color:var(--ink)">📷 تشغيل الكاميرا</button>
-<p>أو اكتب الكود / استخدم ماسح باركود USB</p>
-<input id="scanInput" placeholder="الكود" dir="ltr" maxlength="64" autocomplete="off">
+<div id="camWrap" hidden><div id="reader"></div></div>
+<button class="btn cam" id="camBtn">📷 تشغيل الكاميرا</button>
+<p class="tips">ثبّت البطاقة على بعد 15–25 سم داخل الإطار وتجنّب انعكاس الضوء. بتقرأ QR والباركود. لو بتمسح من شاشة موبايل ارفع السطوع.</p>
+<input id="scanInput" placeholder="أو اكتب الكود / ماسح USB" dir="ltr" maxlength="64" autocomplete="off">
 <button class="btn" id="scanBtn" style="margin-top:8px">تسجيل الحضور</button>
 </div>
 <div class="row" style="align-items:center"><h2 style="flex:1">آخر عمليات المسح</h2><button class="btn alt" id="undo" style="padding:6px 12px">تراجع</button></div>
@@ -87,27 +96,36 @@ code{background:#fff;padding:1px 8px;border-radius:6px;font-size:13px;border:1px
 <section class="tab" id="t-stu">
 <div class="box"><details open><summary>إضافة طالب</summary>
 <div class="g2"><div><label for="nName">الاسم</label><input id="nName" maxlength="60"></div><div><label for="nCode">الكود (اختياري)</label><input id="nCode" dir="ltr" maxlength="20" placeholder="تلقائي"></div></div>
-<label for="nCls">الفصل</label><input id="nCls" maxlength="30" style="margin-bottom:10px">
+<label for="nGrp">المجموعة</label><select id="nGrp" style="margin-bottom:10px"></select>
 <button class="btn" id="addOne">إضافة وإنشاء بطاقة</button></details></div>
 <div class="box"><details><summary>إضافة جماعية</summary>
-<label for="list">كل طالب في سطر: الكود، الاسم، الفصل</label>
-<textarea id="list" rows="4" placeholder="2001, أحمد محمد, 3/أ"></textarea>
+<label for="bGrp">المجموعة</label><select id="bGrp" style="margin-bottom:8px"></select>
+<label for="list">كل طالب في سطر: الكود، الاسم</label>
+<textarea id="list" rows="4" placeholder="2001, أحمد محمد"></textarea>
 <button class="btn" id="add" style="margin-top:8px">إضافة</button></details></div>
-<input id="q" type="search" placeholder="ابحث بالاسم أو الكود" style="margin-bottom:10px">
+<div class="box"><details><summary>المجموعات</summary>
+<div class="row" style="margin-bottom:8px"><input id="nGname" maxlength="40" placeholder="مثال: عربي 3ث — مجموعة 1"><button class="btn" id="addG">إضافة</button></div><ul id="glist"></ul></details></div>
+<div class="g2"><input id="q" type="search" placeholder="ابحث بالاسم أو الكود" aria-label="بحث"><select id="fg" aria-label="تصفية بالمجموعة"></select></div>
 <div class="box"><ul id="slist"></ul></div>
 </section>
 
 <section class="tab" id="t-cards">
-<div class="box noprint"><label for="org">اسم المؤسسة على البطاقة</label><input id="org" maxlength="40" style="margin-bottom:10px">
-<button class="btn" id="print">🖨️ طباعة كل البطاقات</button></div>
+<div class="box noprint"><div class="g2"><div><label for="cg">المجموعة</label><select id="cg"></select></div><div><label for="org">اسم المؤسسة</label><input id="org" maxlength="40"></div></div>
+<button class="btn" id="print">🖨️ طباعة البطاقات</button></div>
 <div class="cards" id="cards"></div>
 </section>
 
 <section class="tab" id="t-rep">
-<div class="grid"><div><strong id="rp">0</strong><span>حاضر</span></div><div><strong id="ra">0</strong><span>غائب</span></div><div><strong id="rr">0%</strong><span>نسبة الحضور</span></div></div>
-<button class="btn" id="exp">تنزيل تقرير (Excel / CSV)</button>
-<h2>الحضور حسب الجلسة</h2><div class="box"><ul id="bySess"></ul></div>
-<h2>الغائبون</h2><div class="box"><ul id="abs"></ul></div>
+<div class="box"><label for="rg">المجموعة</label><select id="rg"></select>
+<div class="g2" style="margin-top:10px"><div><label for="rfrom">من تاريخ</label><input type="date" id="rfrom"></div><div><label for="rto">إلى تاريخ</label><input type="date" id="rto"></div></div>
+<div class="chips" id="chips"><button data-q="t">اليوم</button><button data-q="w">آخر 7 أيام</button><button data-q="m">هذا الشهر</button><button data-q="all">الكل</button></div></div>
+<div class="grid"><div><strong id="sN">0</strong><span>جلسة</span></div><div><strong id="sAvg">0%</strong><span>متوسط الحضور</span></div><div><strong id="sAbs">0</strong><span>مرات غياب</span></div></div>
+<button class="btn" id="exp">تنزيل التقرير (Excel / CSV)</button>
+<h2>الجلسات <span>اضغط على جلسة لعرض التفاصيل</span></h2><div class="box"><ul id="rsess"></ul></div>
+<div class="box" id="rdet" hidden><b id="rdt"></b>
+<h2 style="color:var(--ok)">حضروا <span id="cP"></span></h2><ul id="rpre"></ul>
+<h2 style="color:var(--bad)">غابوا <span id="cA"></span></h2><ul id="rabs"></ul></div>
+<h2>التزام الطلاب <span>الأقل حضورًا أولًا</span></h2><div class="box"><ul id="rstu"></ul></div>
 </section>
 </main>
 
@@ -119,132 +137,163 @@ code{background:#fff;padding:1px 8px;border-radius:6px;font-size:13px;border:1px
 </nav>
 <div id="sheet" role="status" aria-live="polite"></div><div id="toast"></div>
 <dialog id="dlg" style="border:0;border-radius:16px;padding:18px;width:min(92vw,380px)">
-<label for="title">اسم الجلسة</label><input id="title" maxlength="60">
+<label for="title">اسم الجلسة</label><input id="title" maxlength="60" style="margin-bottom:10px">
+<label for="sGrp">المجموعة</label><select id="sGrp" style="margin-bottom:10px"></select>
+<label for="sDate">التاريخ</label><input type="date" id="sDate">
 <div class="row" style="margin-top:12px"><button class="btn" id="create">إنشاء</button><button class="btn alt" id="cancel">إلغاء</button></div></dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.6/JsBarcode.all.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"'`]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c]));
 const clean=(s,n)=>String(s||'').replace(/[\u0000-\u001f\u007f<>]/g,'').trim().slice(0,n);
-const okCode=c=>/^[A-Za-z0-9_-]{1,20}$/.test(c);
+const okCode=c=>/^[A-Za-z0-9_-]{1,20}$/.test(c),okDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(d);
 const rnd=()=>'ST-'+[...crypto.getRandomValues(new Uint8Array(8))].map(x=>x.toString(16).padStart(2,'0')).join('');
-const KEY='att_demo_v2',NAMES=['أحمد محمد إبراهيم','سارة علي حسن','محمد خالد يوسف','فاطمة أحمد سعيد','عمر محمود عبدالله','مريم إبراهيم علي','يوسف سامي فؤاد','نورا محمد طارق','كريم أيمن رشاد','ليلى حسين عمر','حسن علي محمود','دينا مصطفى كمال'];
-let D,RECENT=[];
+const E=t=>`<p class="empty">${t}</p>`,day=864e5;
+const ymd=d=>{const x=new Date(d);return new Date(x-x.getTimezoneOffset()*6e4).toISOString().slice(0,10)},today=()=>ymd(Date.now());
+const fd=d=>new Date(d+'T12:00:00').toLocaleDateString('ar-EG',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+const KEY='att_demo_v3',NAMES=['أحمد محمد إبراهيم','سارة علي حسن','محمد خالد يوسف','فاطمة أحمد سعيد','عمر محمود عبدالله','مريم إبراهيم علي','يوسف سامي فؤاد','نورا محمد طارق','كريم أيمن رشاد','ليلى حسين عمر','حسن علي محمود','دينا مصطفى كمال','زياد إيهاب سمير','هبة عبدالرحمن ناصر','مصطفى عمرو صابر'];
+let D,RECENT=[],SEL='';
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(D))}catch{toast('تعذر الحفظ على المتصفح')}};
 function seed(){
- const now=Date.now(),st=NAMES.map((n,i)=>({c:String(1001+i),n,k:i<6?'3/أ':'3/ب',t:rnd()}));
- const se=[{id:'s1',n:'رياضيات — الحصة الأولى',ts:now-864e5},{id:'s2',n:'علوم — الحصة الثانية',ts:now}],at=[];
- st.forEach((s,i)=>{if(i%5!==4)at.push({s:'s1',c:s.c,t:new Date(now-864e5+i*3e4).toISOString()});if(i%4!==3&&i<9)at.push({s:'s2',c:s.c,t:new Date(now-6e5+i*3e4).toISOString()})});
- D={st,se,at,org:'مدرسة النور النموذجية',sid:'s2'};save();
-}
+ const now=Date.now(),gr=[{id:'g1',n:'عربي 3ث — مجموعة 1'},{id:'g2',n:'عربي 3ث — مجموعة 2'},{id:'g3',n:'رياضيات 2ث — مجموعة 1'}];
+ const st=NAMES.map((n,i)=>({c:String(1001+i),n,g:gr[Math.floor(i/5)].id,t:rnd()})),se=[],at=[];
+ gr.forEach((g,gi)=>[14,7,0].forEach((o,k)=>{const id=g.id+'_'+k;se.push({id,n:'حصة '+(k+1),g:g.id,d:ymd(now-o*day),ts:now-o*day});
+  if(o)st.filter(s=>s.g===g.id).forEach((s,i)=>{if((i+k+gi)%4!==0)at.push({s:id,c:s.c,t:new Date(now-o*day+i*3e4).toISOString()})})}));
+ D={gr,st,se,at,org:'مركز النخبة التعليمي',sid:'g1_2',rep:{g:'',a:'',b:''}};save();SEL=''}
+const sorted=()=>[...D.se].sort((a,b)=>b.d.localeCompare(a.d)||b.ts-a.ts);
 function load(){try{D=JSON.parse(localStorage.getItem(KEY))}catch{D=null}
- if(!D||!Array.isArray(D.st)||!Array.isArray(D.se)||!Array.isArray(D.at))seed();
- D.org=clean(D.org,40)||'المؤسسة';if(!D.se.some(s=>s.id===D.sid))D.sid=D.se[0]?.id||'';}
+ if(!D||['gr','st','se','at'].some(k=>!Array.isArray(D[k])))seed();
+ D.org=clean(D.org,40)||'المؤسسة';D.rep=D.rep||{g:'',a:'',b:''};if(!D.se.some(s=>s.id===D.sid))D.sid=sorted()[0]?.id||''}
+const gname=id=>D.gr.find(g=>g.id===id)?.n||'بدون مجموعة';
 const cur=()=>D.se.find(s=>s.id===D.sid);
-const pres=()=>new Set(D.at.filter(a=>a.s===D.sid).map(a=>a.c));
+const roster=s=>s?D.st.filter(x=>!s.g||x.g===s.g):[];
+const presOf=id=>new Set(D.at.filter(a=>a.s===id).map(a=>a.c));
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2500)};
 let ac;function beep(ok){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume&&ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=ok?880:260;g.gain.value=.08;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+(ok?.1:.25))}catch{}}
 function show(cls,title,sub){const e=$('#sheet'),v=$('#vp');e.className='on '+cls;e.innerHTML=`<b>${esc(title)}</b><span>${esc(sub)}</span>`;v.className='vp '+cls;
  clearTimeout(show.h);show.h=setTimeout(()=>{e.className='';v.className='vp'},2200);beep(cls==='ok');navigator.vibrate&&navigator.vibrate(cls==='ok'?60:[80,50,80])}
 
-/* ---------- QR / Barcode ---------- */
+/* ---------- QR / Barcode / Cards ---------- */
 function qrObj(t){const q=qrcode(0,'M');q.addData(t);q.make();return q}
 function qrSvg(t){const q=qrObj(t),n=q.getModuleCount();let p='';
  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))p+=`M${c+4} ${r+4}h1v1h-1z`;
  return `<svg viewBox="0 0 ${n+8} ${n+8}" shape-rendering="crispEdges" role="img" aria-label="QR"><rect width="100%" height="100%" fill="#fff"/><path d="${p}" fill="#000"/></svg>`}
-const cardHTML=s=>`<div class="idc"><div class="ih"><b>${esc(D.org)}</b><span>بطاقة حضور</span></div><div class="ib"><div class="im"><h4>${esc(s.n)}</h4><p>${esc(s.k)}</p><code>${esc(s.c)}</code></div><div class="qr">${qrSvg(s.t)}</div></div><svg class="bc" data-c="${esc(s.c)}"></svg><button class="btn alt noprint" data-png="${esc(s.c)}">تنزيل البطاقة PNG</button></div>`;
-function renderCards(){$('#cards').innerHTML=D.st.map(cardHTML).join('')||'<p class="empty">أضف طلابًا لإنشاء بطاقاتهم.</p>';
- $$('.bc').forEach(e=>{try{JsBarcode(e,e.dataset.c,{format:'CODE128',height:40,width:1.6,margin:0,displayValue:false})}catch{}})}
+const cardHTML=s=>`<div class="idc"><div class="ih"><b>${esc(D.org)}</b><span>بطاقة حضور</span></div><div class="grp">${esc(gname(s.g))}</div><div class="ib"><div class="im"><h4>${esc(s.n)}</h4><code>${esc(s.c)}</code></div><div class="qr">${qrSvg(s.t)}</div></div><svg class="bc" data-c="${esc(s.c)}"></svg><button class="btn alt noprint" data-png="${esc(s.c)}">تنزيل البطاقة PNG</button></div>`;
+function renderCards(){const g=$('#cg').value,L=D.st.filter(s=>!g||s.g===g);$('#cards').innerHTML=L.map(cardHTML).join('')||E('لا توجد بطاقات في هذه المجموعة.');
+ $$('.bc').forEach(e=>{try{JsBarcode(e,e.dataset.c,{format:'CODE128',height:50,width:2,margin:6,fontSize:13,textMargin:2,displayValue:true})}catch{}})}
 function png(s){const W=1016,H=640,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),F='"IBM Plex Sans Arabic",Tahoma,sans-serif';
- g.fillStyle='#fff';g.fillRect(0,0,W,H);g.fillStyle='#12263A';g.fillRect(0,0,W,110);
- g.direction='rtl';g.textAlign='right';g.fillStyle='#fff';g.font='700 40px '+F;g.fillText(D.org,W-40,70);
- g.fillStyle='#12263A';g.font='700 50px '+F;g.fillText(s.n,W-40,230);
- g.fillStyle='#5B6B7B';g.font='400 34px '+F;g.fillText(s.k,W-40,290);g.font='700 38px monospace';g.direction='ltr';g.textAlign='right';g.fillText(s.c,W-40,350);
- const q=qrObj(s.t),n=q.getModuleCount(),z=Math.floor(300/(n+8)),sz=z*(n+8);g.fillStyle='#fff';g.fillRect(40,150,sz,sz);g.fillStyle='#000';
- for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))g.fillRect(40+(k+4)*z,150+(r+4)*z,z,z);
- try{const b=document.createElement('canvas');JsBarcode(b,s.c,{format:'CODE128',height:90,width:3,displayValue:false,margin:0});const sc=Math.min(1,(W-80)/b.width);g.drawImage(b,(W-b.width*sc)/2,490,b.width*sc,b.height*sc)}catch{}
+ g.fillStyle='#fff';g.fillRect(0,0,W,H);g.fillStyle='#12263A';g.fillRect(0,0,W,110);g.fillStyle='#0B6E6E';g.fillRect(0,110,W,56);
+ g.direction='rtl';g.textAlign='right';g.fillStyle='#fff';g.font='700 40px '+F;g.fillText(D.org,W-40,70);g.font='700 30px '+F;g.fillText(gname(s.g),W-40,150);
+ g.fillStyle='#12263A';g.font='700 50px '+F;g.fillText(s.n,W-40,270);g.font='700 38px monospace';g.direction='ltr';g.fillText(s.c,W-40,335);
+ const q=qrObj(s.t),n=q.getModuleCount(),z=Math.floor(300/(n+8));g.fillStyle='#000';
+ for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))g.fillRect(40+(k+4)*z,190+(r+4)*z,z,z);
+ try{const b=document.createElement('canvas');JsBarcode(b,s.c,{format:'CODE128',height:80,width:3,displayValue:false,margin:10});const sc=Math.min(1,(W-80)/b.width);g.drawImage(b,(W-b.width*sc)/2,530,b.width*sc,b.height*sc)}catch{}
  c.toBlob(bl=>{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='card-'+s.c+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3)})}
 
 /* ---------- Render ---------- */
+const gOpts=f=>`<option value="">${f}</option>`+D.gr.map(g=>`<option value="${esc(g.id)}">${esc(g.n)}</option>`).join('');
+const fill=(sel,html)=>{const e=$(sel),v=e.value;e.innerHTML=html;if([...e.options].some(o=>o.value===v))e.value=v};
+const cls=p=>p>=85?'hi':p>=70?'mid':'low';
 function render(){
- const t=D.st.length,P=pres(),p=P.size,f=$('#q').value.trim(),tag=(c,on)=>`<button class="tag ${on?'':'no'}" data-tg="${esc(c)}" aria-label="تبديل الحضور">${on?'حاضر':'لم يحضر'}</button>`;
- $('#cnt').textContent=p;$('#tot').textContent=t;$('#bar').style.width=(t?p/t*100:0)+'%';$('#sname').textContent=cur()?.n||'';
- $('#sess').innerHTML=D.se.map(s=>`<option value="${esc(s.id)}"${s.id===D.sid?' selected':''}>${esc(s.n)}</option>`).join('')||'<option value="">لا توجد جلسات</option>';
- $('#recent').innerHTML=RECENT.length?RECENT.map(r=>`<li><div>${esc(r.n)}<small>${esc(r.time)}</small></div><span class="tag">حاضر</span></li>`).join(''):'<p class="empty">لم يُسجَّل أي حضور بعد.</p>';
- $('#slist').innerHTML=D.st.filter(s=>!f||s.n.includes(f)||s.c.includes(f)).map(s=>`<li><div>${esc(s.n)}<small>${esc(s.c)} · ${esc(s.k)}</small></div><div class="row" style="flex:none;align-items:center">${tag(s.c,P.has(s.c))}<button class="x" data-dl="${esc(s.c)}" aria-label="حذف ${esc(s.n)}">×</button></div></li>`).join('')||'<p class="empty">لا يوجد طلاب.</p>';
- $('#rp').textContent=p;$('#ra').textContent=t-p;$('#rr').textContent=(t?Math.round(p/t*100):0)+'%';
- $('#abs').innerHTML=D.st.filter(s=>!P.has(s.c)).map(s=>`<li><div>${esc(s.n)}</div><small>${esc(s.c)}</small></li>`).join('')||'<p class="empty">لا يوجد غائبون.</p>';
- $('#bySess').innerHTML=D.se.map(s=>{const n=new Set(D.at.filter(a=>a.s===s.id).map(a=>a.c)).size,pc=t?Math.round(n/t*100):0;return `<li style="display:block"><div class="stat"><span>${esc(s.n)}</span><b>${pc}%</b></div><div class="bar"><i style="width:${pc}%"></i></div></li>`}).join('')||'<p class="empty">لا توجد جلسات.</p>';
+ fill('#nGrp',gOpts('بدون مجموعة'));fill('#bGrp',gOpts('بدون مجموعة'));fill('#fg',gOpts('كل المجموعات'));fill('#cg',gOpts('كل المجموعات'));fill('#rg',gOpts('كل المجموعات'));
+ const ss=cur(),R=roster(ss),P=presOf(D.sid),p=R.filter(s=>P.has(s.c)).length,t=R.length;
+ $('#cnt').textContent=p;$('#tot').textContent=t;$('#bar').style.width=(t?p/t*100:0)+'%';
+ $('#sname').textContent=ss?`${ss.n} — ${fd(ss.d)}`:'';$('#gtag').textContent=ss?gname(ss.g):'—';
+ $('#sess').innerHTML=D.gr.concat([{id:'',n:'بدون مجموعة'}]).map(g=>{const L=sorted().filter(s=>s.g===g.id);return L.length?`<optgroup label="${esc(g.n)}">${L.map(s=>`<option value="${esc(s.id)}"${s.id===D.sid?' selected':''}>${esc(s.n)} — ${fd(s.d)}</option>`).join('')}</optgroup>`:''}).join('')||'<option value="">لا توجد جلسات</option>';
+ $('#recent').innerHTML=RECENT.length?RECENT.map(r=>`<li><div>${esc(r.n)}<small>${esc(r.time)}</small></div><span class="tag">حاضر</span></li>`).join(''):E('لم يُسجَّل أي حضور بعد.');
+ const f=$('#q').value.trim(),fg=$('#fg').value;
+ $('#slist').innerHTML=D.st.filter(s=>(!fg||s.g===fg)&&(!f||s.n.includes(f)||s.c.includes(f))).map(s=>{const inR=ss&&(!ss.g||ss.g===s.g),on=P.has(s.c);
+  return `<li><div>${esc(s.n)}<small>${esc(s.c)} · ${esc(gname(s.g))}</small></div><div class="row" style="flex:none;align-items:center">${inR?`<button class="tag ${on?'':'no'}" data-tg="${esc(s.c)}">${on?'حاضر':'لم يحضر'}</button>`:''}<button class="x" data-dl="${esc(s.c)}" aria-label="حذف ${esc(s.n)}">×</button></div></li>`}).join('')||E('لا يوجد طلاب.');
+ $('#glist').innerHTML=D.gr.map(g=>`<li><div>${esc(g.n)}<small>${D.st.filter(s=>s.g===g.id).length} طالب</small></div><button class="x" data-dg="${esc(g.id)}" aria-label="حذف المجموعة">×</button></li>`).join('')||E('لا توجد مجموعات.');
  if($('#t-cards').classList.contains('on'))renderCards();
-}
+ renderRep()}
+
+/* ---------- Reports ---------- */
+function repSess(){const r=D.rep;return sorted().filter(s=>(!r.g||s.g===r.g)&&(!r.a||s.d>=r.a)&&(!r.b||s.d<=r.b))}
+function renderRep(){
+ const r=D.rep,SS=repSess(),PS={};SS.forEach(x=>PS[x.id]=presOf(x.id));
+ $('#rg').value=r.g;$('#rfrom').value=r.a;$('#rto').value=r.b;
+ const info=SS.map(x=>{const n=roster(x).length,p=PS[x.id].size;return{x,n,p,pc:n?Math.round(p/n*100):0}});
+ const tot=info.reduce((a,i)=>a+i.n,0),pp=info.reduce((a,i)=>a+i.p,0);
+ $('#sN').textContent=SS.length;$('#sAvg').textContent=(tot?Math.round(pp/tot*100):0)+'%';$('#sAbs').textContent=tot-pp;
+ $('#rsess').innerHTML=info.map(i=>`<li><button class="rowb${i.x.id===SEL?' sel':''}" data-rs="${esc(i.x.id)}"><div class="stat"><span>${esc(i.x.n)} <small>${esc(gname(i.x.g))} · ${fd(i.x.d)}</small></span><b class="pc ${cls(i.pc)}">${i.p}/${i.n} · ${i.pc}%</b></div><div class="bar"><i style="width:${i.pc}%"></i></div></button></li>`).join('')||E('لا توجد جلسات في هذه الفترة.');
+ if(!SS.some(x=>x.id===SEL))SEL=SS[0]?.id||'';
+ const x=SS.find(y=>y.id===SEL);$('#rdet').hidden=!x;
+ if(x){const R=roster(x),P=PS[x.id],a=R.filter(s=>P.has(s.c)),b=R.filter(s=>!P.has(s.c)),L=l=>l.map(s=>`<li><div>${esc(s.n)}</div><small>${esc(s.c)}</small></li>`).join('');
+  $('#rdt').textContent=`${x.n} — ${gname(x.g)} — ${fd(x.d)}`;$('#cP').textContent=a.length;$('#cA').textContent=b.length;$('#rpre').innerHTML=L(a)||E('لا أحد.');$('#rabs').innerHTML=L(b)||E('لا يوجد غائبون.')}
+ const rows=D.st.filter(s=>!r.g||s.g===r.g).map(s=>{const rel=SS.filter(x=>!x.g||x.g===s.g),a=rel.filter(x=>PS[x.id].has(s.c)).length;return{s,a,n:rel.length,pc:rel.length?Math.round(a/rel.length*100):0}}).filter(o=>o.n).sort((a,b)=>a.pc-b.pc);
+ $('#rstu').innerHTML=rows.map(o=>`<li><div>${esc(o.s.n)}<small>${esc(gname(o.s.g))}</small></div><span class="pc ${cls(o.pc)}">${o.a}/${o.n} · ${o.pc}%</span></li>`).join('')||E('لا توجد بيانات.')}
 
 /* ---------- Attendance ---------- */
 let lastV='',lastT=0;
-function scan(v){v=clean(v,64);if(!v)return;const now=Date.now();if(v===lastV&&now-lastT<2500)return;lastV=v;lastT=now;
- if(!D.sid)return show('bad','لا توجد جلسة','أنشئ جلسة أولًا');
+function scan(v){v=clean(v,64);if(!v)return;const now=Date.now();if(v===lastV&&now-lastT<2500){lastT=now;return}lastV=v;lastT=now;
+ const ss=cur();if(!ss)return show('bad','لا توجد جلسة','أنشئ جلسة أولًا');
  const s=D.st.find(x=>x.t===v||x.c===v);
  if(!s)return show('bad','كود غير معروف','هذا الكود غير مسجّل');
- if(pres().has(s.c))return show('dup',s.n,'سُجّل حضوره من قبل');
- D.at.push({s:D.sid,c:s.c,t:new Date().toISOString()});save();
- RECENT.unshift({n:s.n,c:s.c,time:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})});RECENT=RECENT.slice(0,8);
- render();show('ok',s.n,'تم تسجيل الحضور')}
+ if(ss.g&&s.g!==ss.g)return show('bad',s.n,'ليس من هذه المجموعة — مجموعته: '+gname(s.g));
+ if(presOf(ss.id).has(s.c))return show('dup',s.n,'سُجّل حضوره من قبل');
+ D.at.push({s:ss.id,c:s.c,t:new Date().toISOString()});save();
+ RECENT.unshift({n:s.n,c:s.c,s:ss.id,time:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})});RECENT=RECENT.slice(0,8);
+ render();show('ok',s.n,gname(s.g))}
 function toggle(c){const i=D.at.findIndex(a=>a.s===D.sid&&a.c===c);if(i>-1)D.at.splice(i,1);else D.at.push({s:D.sid,c,t:new Date().toISOString()});save();render()}
 
-/* ---------- Camera ---------- */
-let stream,det,timer,busy=false;const cv=document.createElement('canvas');
+/* ---------- Camera (html5-qrcode: QR + Code128) ---------- */
+let H5=null;
 async function camOn(){
- if(!navigator.mediaDevices?.getUserMedia)return toast('الكاميرا تحتاج رابط HTTPS ومتصفحًا حديثًا');
- try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280}},audio:false})}
- catch(e){return toast(e.name==='NotAllowedError'?'تم رفض إذن الكاميرا — فعّله من إعدادات المتصفح':'تعذّر تشغيل الكاميرا')}
- const v=$('#video');v.srcObject=stream;await v.play().catch(()=>{});$('#camWrap').hidden=false;$('#camBtn').textContent='⏹ إيقاف الكاميرا';
- try{det=new BarcodeDetector({formats:['qr_code','code_128']})}catch{det=null}loop()}
-function camOff(){clearTimeout(timer);stream&&stream.getTracks().forEach(t=>t.stop());stream=null;$('#video').srcObject=null;$('#camWrap').hidden=true;$('#camBtn').textContent='📷 تشغيل الكاميرا'}
-async function loop(){if(!stream)return;const v=$('#video');
- if(v.readyState>=2&&!busy){busy=true;try{
-  if(det){const r=await det.detect(v);if(r[0])scan(r[0].rawValue)}
-  else if(window.jsQR&&v.videoWidth){const w=480,h=Math.round(w*v.videoHeight/v.videoWidth);cv.width=w;cv.height=h;const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(v,0,0,w,h);const d=x.getImageData(0,0,w,h),r=jsQR(d.data,w,h);if(r)scan(r.data)}
- }catch{}busy=false}
- timer=setTimeout(loop,150)}
+ if(!window.Html5Qrcode)return toast('مكتبة الكاميرا لم تُحمَّل — تأكد من الإنترنت');
+ if(!window.isSecureContext)return toast('الكاميرا تحتاج رابط HTTPS');
+ $('#camWrap').hidden=false;
+ H5=new Html5Qrcode('reader',{formatsToSupport:[Html5QrcodeSupportedFormats.QR_CODE,Html5QrcodeSupportedFormats.CODE_128],experimentalFeatures:{useBarCodeDetectorIfSupported:true},verbose:false});
+ try{await H5.start({facingMode:'environment'},{fps:12,videoConstraints:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}},t=>scan(t),()=>{});$('#camBtn').textContent='⏹ إيقاف الكاميرا'}
+ catch(e){await camOff();toast(/Permission|NotAllowed/i.test(String(e))?'تم رفض إذن الكاميرا — فعّله من إعدادات المتصفح':'تعذّر تشغيل الكاميرا')}}
+async function camOff(){const h=H5;H5=null;$('#camBtn').textContent='📷 تشغيل الكاميرا';$('#camWrap').hidden=true;if(h){try{await h.stop()}catch{}try{h.clear()}catch{}}}
 
 /* ---------- Events ---------- */
-$('#camBtn').onclick=()=>stream?camOff():camOn();
+$('#camBtn').onclick=()=>H5?camOff():camOn();
 $('#scanBtn').onclick=()=>{scan($('#scanInput').value);$('#scanInput').value='';$('#scanInput').focus()};
 $('#scanInput').onkeydown=e=>{if(e.key==='Enter')$('#scanBtn').click()};
-$('#undo').onclick=()=>{const r=RECENT.shift();if(!r)return toast('لا يوجد ما يُتراجع عنه');const i=D.at.findIndex(a=>a.s===D.sid&&a.c===r.c);if(i>-1)D.at.splice(i,1);save();render();toast('تم التراجع')};
+$('#undo').onclick=()=>{const r=RECENT.shift();if(!r)return toast('لا يوجد ما يُتراجع عنه');const i=D.at.findIndex(a=>a.s===r.s&&a.c===r.c);if(i>-1)D.at.splice(i,1);save();render();toast('تم التراجع')};
 function go(t){if(t!=='scan')camOff();$$('nav button,.tab').forEach(e=>e.classList.remove('on'));$(`nav [data-t=${t}]`).classList.add('on');$('#t-'+t).classList.add('on');render()}
 $$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
 document.addEventListener('visibilitychange',()=>{if(document.hidden)camOff()});
 $('#sess').onchange=()=>{D.sid=$('#sess').value;save();render()};
-let qT;$('#q').oninput=()=>{clearTimeout(qT);qT=setTimeout(render,120)};
-$('#newS').onclick=()=>{$('#title').value=new Date().toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});$('#dlg').showModal()};
+let qT;$('#q').oninput=()=>{clearTimeout(qT);qT=setTimeout(render,120)};$('#fg').onchange=render;$('#cg').onchange=renderCards;
+$('#newS').onclick=()=>{$('#title').value='حصة جديدة';$('#sGrp').innerHTML=gOpts('بدون مجموعة');$('#sGrp').value=cur()?.g||'';$('#sDate').value=today();$('#dlg').showModal()};
 $('#cancel').onclick=()=>$('#dlg').close();
-$('#create').onclick=()=>{const id='s'+Date.now();D.se.unshift({id,n:clean($('#title').value,60)||'جلسة جديدة',ts:Date.now()});D.sid=id;save();$('#dlg').close();render();toast('تم إنشاء الجلسة')};
-$('#delS').onclick=()=>{if(!D.sid||!confirm('حذف الجلسة وكل حضورها؟'))return;D.at=D.at.filter(a=>a.s!==D.sid);D.se=D.se.filter(s=>s.id!==D.sid);D.sid=D.se[0]?.id||'';save();render()};
-function addStu(c,n,k){c=clean(c,20);n=clean(n,60);k=clean(k,30);if(!n)return 'الاسم مطلوب';
- if(!c){let i=1001+D.st.length;while(D.st.some(s=>s.c===String(i)))i++;c=String(i)}
+$('#create').onclick=()=>{const id='s'+Date.now(),g=$('#sGrp').value,d=okDate($('#sDate').value)?$('#sDate').value:today();
+ D.se.push({id,n:clean($('#title').value,60)||'حصة جديدة',g:D.gr.some(x=>x.id===g)?g:'',d,ts:Date.now()});D.sid=id;save();$('#dlg').close();render();toast('تم إنشاء الجلسة')};
+$('#delS').onclick=()=>{if(!D.sid||!confirm('حذف الجلسة وكل حضورها؟'))return;D.at=D.at.filter(a=>a.s!==D.sid);D.se=D.se.filter(s=>s.id!==D.sid);D.sid=sorted()[0]?.id||'';save();render()};
+function addStu(c,n,g){c=clean(c,20);n=clean(n,60);if(!n)return 'الاسم مطلوب';
+ if(!c){let i=1001;while(D.st.some(s=>s.c===String(i)))i++;c=String(i)}
  if(!okCode(c))return 'الكود: حروف إنجليزية وأرقام فقط';if(D.st.some(s=>s.c===c))return 'الكود '+c+' مستخدم';
- D.st.push({c,n,k,t:rnd()});return ''}
-$('#addOne').onclick=()=>{const e=addStu($('#nCode').value,$('#nName').value,$('#nCls').value);if(e)return toast(e);save();['#nCode','#nName','#nCls'].forEach(s=>$(s).value='');render();toast('تمت الإضافة — البطاقة جاهزة في تاب البطاقات')};
-$('#add').onclick=()=>{let ok=0,bad=0;$('#list').value.split('\n').slice(0,500).forEach(l=>{const a=l.split(/[,\t،]/);if(a.length<2)return;addStu(a[0],a[1],a[2]||'')?bad++:ok++});
+ D.st.push({c,n,g:D.gr.some(x=>x.id===g)?g:'',t:rnd()});return ''}
+$('#addOne').onclick=()=>{const e=addStu($('#nCode').value,$('#nName').value,$('#nGrp').value);if(e)return toast(e);save();['#nCode','#nName'].forEach(s=>$(s).value='');render();toast('تمت الإضافة — البطاقة جاهزة في تاب البطاقات')};
+$('#add').onclick=()=>{let ok=0,bad=0;$('#list').value.split('\n').slice(0,500).forEach(l=>{const a=l.split(/[,\t،]/);if(a.length<2)return;addStu(a[0],a[1],$('#bGrp').value)?bad++:ok++});
  if(!ok&&!bad)return toast('اكتب كل طالب في سطر');save();$('#list').value='';render();toast(`أُضيف ${ok}${bad?' — تخطّينا '+bad:''}`)};
+$('#addG').onclick=()=>{const n=clean($('#nGname').value,40);if(!n)return toast('اكتب اسم المجموعة');if(D.gr.some(g=>g.n===n))return toast('المجموعة موجودة');D.gr.push({id:'g'+Date.now().toString(36),n});save();$('#nGname').value='';render();toast('تمت إضافة المجموعة')};
+$('#glist').onclick=e=>{const id=e.target.closest('[data-dg]')?.dataset.dg;if(!id||!confirm('حذف المجموعة؟ الطلاب والجلسات هتفضل بدون مجموعة.'))return;
+ D.gr=D.gr.filter(g=>g.id!==id);D.st.forEach(s=>{if(s.g===id)s.g=''});D.se.forEach(s=>{if(s.g===id)s.g=''});if(D.rep.g===id)D.rep.g='';save();render()};
 $('#slist').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.tg)toggle(b.dataset.tg);
  else if(b.dataset.dl&&confirm('حذف الطالب وسجل حضوره؟')){D.st=D.st.filter(s=>s.c!==b.dataset.dl);D.at=D.at.filter(a=>a.c!==b.dataset.dl);save();render()}};
 $('#cards').onclick=e=>{const b=e.target.closest('[data-png]');if(b){const s=D.st.find(x=>x.c===b.dataset.png);s&&png(s)}};
 $('#org').oninput=e=>{D.org=clean(e.target.value,40)||'المؤسسة';save();renderCards()};
 $('#print').onclick=()=>{renderCards();window.print()};
-$('#exp').onclick=()=>{if(!D.sid)return toast('اختر جلسة أولًا');
- const safe=v=>{v=String(v??'');if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
- const rows=[['الكود','الاسم','الفصل','الحالة','الوقت']];
- D.st.forEach(s=>{const r=D.at.find(a=>a.s===D.sid&&a.c===s.c);rows.push([s.c,s.n,s.k,r?'حاضر':'غائب',r?new Date(r.t).toLocaleString('ar-EG'):''])});
+const setRep=(k,v)=>{D.rep[k]=k==='g'?v:(okDate(v)?v:'');save();render()};
+$('#rg').onchange=e=>setRep('g',e.target.value);$('#rfrom').onchange=e=>setRep('a',e.target.value);$('#rto').onchange=e=>setRep('b',e.target.value);
+$('#chips').onclick=e=>{const q=e.target.dataset.q;if(!q)return;const t=today();D.rep.a={t,w:ymd(Date.now()-6*day),m:t.slice(0,8)+'01',all:''}[q];D.rep.b=q==='all'?'':t;save();render()};
+$('#rsess').onclick=e=>{const b=e.target.closest('[data-rs]');if(b){SEL=b.dataset.rs;renderRep()}};
+$('#exp').onclick=()=>{const SS=repSess().sort((a,b)=>a.d.localeCompare(b.d)||a.ts-b.ts);if(!SS.length)return toast('لا توجد جلسات في هذه الفترة');
+ const safe=v=>{v=String(v??'');if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'},PS={};SS.forEach(x=>PS[x.id]=presOf(x.id));
+ const rows=[['الكود','الاسم','المجموعة',...SS.map(x=>x.n+' ('+x.d+')'),'الحضور','الغياب','النسبة']];
+ D.st.filter(s=>!D.rep.g||s.g===D.rep.g).forEach(s=>{let a=0,n=0;const m=SS.map(x=>{if(x.g&&x.g!==s.g)return '—';n++;if(PS[x.id].has(s.c)){a++;return 'حاضر'}return 'غائب'});if(n)rows.push([s.c,s.n,gname(s.g),...m,a,n-a,Math.round(a/n*100)+'%'])});
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.map(r=>r.map(safe).join(',')).join('\r\n')],{type:'text/csv'}));
  a.download='attendance-report.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3)};
-$('#resetDemo').onclick=()=>{if(!confirm('إرجاع البيانات التجريبية للحالة الأصلية؟'))return;camOff();seed();RECENT=[];$('#org').value=D.org;render();toast('تمت إعادة التعيين')};
+$('#resetDemo').onclick=async()=>{if(!confirm('إرجاع البيانات التجريبية للحالة الأصلية؟'))return;await camOff();seed();RECENT=[];$('#org').value=D.org;render();toast('تمت إعادة التعيين')};
 
 load();$('#org').value=D.org;render();
 if(!window.qrcode||!window.JsBarcode)toast('تعذّر تحميل مكتبات QR — تأكد من الاتصال بالإنترنت');
- //console.log("Hello World")
 </script></body></html>
