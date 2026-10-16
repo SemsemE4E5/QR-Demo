@@ -1,8 +1,8 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'unsafe-inline' https://cdnjs.cloudflare.com;style-src 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob: mediastream:;connect-src 'none';base-uri 'none';form-action 'none';object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'unsafe-inline' https://cdnjs.cloudflare.com;style-src 'unsafe-inline' https://fonts.googleapis.com;font-src https://fonts.gstatic.com;img-src 'self' data: blob:;media-src blob: mediastream:;connect-src 'none';base-uri 'none';form-action 'none';object-src 'none';worker-src 'self';manifest-src 'self'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#12263A"><title>نظام الحضور — نسخة تجريبية</title>
+<meta name="theme-color" content="#12263A"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="الحضور"><meta name="apple-mobile-web-app-status-bar-style" content="black"><title>نظام الحضور — نسخة تجريبية</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#12263A;--paper:#F4F6F8;--line:#DDE3EA;--muted:#5B6B7B;--brand:#0B6E6E;--ok:#15803D;--warn:#B45309;--bad:#B91C1C;--gold:#D4A017}
@@ -76,7 +76,7 @@ code{background:#fff;padding:1px 8px;border-radius:6px;font-size:13px;border:1px
 .bc{width:92%;height:auto;max-height:90px;margin:0 auto 10px;display:block}
 h2 span{font-size:14px;font-weight:400;color:var(--muted)}
 </style></head><body>
-<div id="demoBar"><span>🎯 نسخة تجريبية — البيانات وهمية ومحفوظة على جهازك فقط</span><button id="resetDemo">إعادة تعيين</button></div>
+<div id="demoBar"><span>🎯 نسخة تجريبية — البيانات وهمية ومحفوظة على جهازك فقط</span><button id="inst" hidden>📲 تثبيت التطبيق</button><button id="resetDemo">إعادة تعيين</button></div>
 <header><div><b>نظام الحضور</b><small id="sname"></small></div><span class="chip">تجريبي</span></header>
 <main>
 <section class="tab on" id="t-scan">
@@ -135,6 +135,7 @@ h2 span{font-size:14px;font-weight:400;color:var(--muted)}
 <button data-t="cards"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h4M7 14h2M15 10h2v4h-2z"/></svg>البطاقات</button>
 <button data-t="rep"><svg class="i" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>التقارير</button>
 </nav>
+<div id="sheet" role="status" aria-live="polite"></div><div id="toast"></div>
 <dialog id="dlg" style="border:0;border-radius:16px;padding:18px;width:min(92vw,380px)">
 <label for="title">اسم الجلسة</label><input id="title" maxlength="60" style="margin-bottom:10px">
 <label for="sGrp">المجموعة</label><select id="sGrp" style="margin-bottom:10px"></select>
@@ -293,6 +294,11 @@ $('#exp').onclick=()=>{const SS=repSess().sort((a,b)=>a.d.localeCompare(b.d)||a.
  a.download='attendance-report.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5e3)};
 $('#resetDemo').onclick=async()=>{if(!confirm('إرجاع البيانات التجريبية للحالة الأصلية؟'))return;await camOff();seed();RECENT=[];$('#org').value=D.org;render();toast('تمت إعادة التعيين')};
 
+let DP;addEventListener('beforeinstallprompt',e=>{e.preventDefault();DP=e;$('#inst').hidden=false});
+addEventListener('appinstalled',()=>{$('#inst').hidden=true});
+$('#inst').onclick=async()=>{if(DP){DP.prompt();await DP.userChoice;DP=null;$('#inst').hidden=true}else toast('اضغط زر المشاركة ثم "إضافة إلى الشاشة الرئيسية"')};
+if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone)$('#inst').hidden=false;
+if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 load();$('#org').value=D.org;render();
 if(!window.qrcode||!window.JsBarcode)toast('تعذّر تحميل مكتبات QR — تأكد من الاتصال بالإنترنت');
 </script></body></html>
